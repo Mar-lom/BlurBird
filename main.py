@@ -71,11 +71,14 @@ def calc_bounding_box(window, landmarks):
     x,y,w,h = cv.boundingRect(lm_array)
 
 
-    return[x,y,x+w,y+y]
+    return[x,y,x+w,y+h]
 
+#draws the bounding box
 def draw_bbox(drawit, window,bbox):
     if drawit:
         cv.rectangle(window,(bbox[0],bbox[1]),(bbox[2],bbox[3]),(0,0,0),1)
     return window
+
+
 if __name__== "__main__":
     main()
