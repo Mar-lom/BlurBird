@@ -18,3 +18,5 @@ while videoCap.isOpened():
 videoCap.release()
 
 cv2.destroyAllWindows()
+
+
