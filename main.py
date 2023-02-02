@@ -1,6 +1,7 @@
 import cv2 as cv
 import mediapipe as mp
 import numpy as np
+import math
 
 
 mp_hands = mp.solutions.hands
@@ -29,7 +30,7 @@ def main():
         frame.flags.writeable = False #makes it so that the image data is passed by reference before inital processing,
                                         #improves performance
 
-        frame =cv.cvtColor(frame, cv.COLOR_BGR2RGB)#convert image to RGB for mediapipe processing
+        frame = cv.cvtColor(frame, cv.COLOR_BGR2RGB)#convert image to RGB for mediapipe processing
         frame = cv.flip(frame, 1)  # invert the display, so it looks correct left to right
         tracking = hands.process(frame)#tracking sends the converted image data through the mediapipe .Hands() function
                                         #to get landmark data
@@ -47,9 +48,10 @@ def main():
                     mp_drawStyle.get_default_hand_connections_style()
 
                 )
-                bbox =calc_bounding_box(frame,hand_landmarks)
+                bbox = calc_bounding_box(frame,hand_landmarks)
 
                 frame = draw_bbox(drawit,frame,bbox)
+                frame = draw_centre(drawit,frame,bbox)
 
         cv.imshow('Output', frame)# output window
 
@@ -77,6 +79,15 @@ def calc_bounding_box(window, landmarks):
 def draw_bbox(drawit, window,bbox):
     if drawit:
         cv.rectangle(window,(bbox[0],bbox[1]),(bbox[2],bbox[3]),(0,0,0),1)
+    return window
+def draw_centre(drawit,window,bbox):
+    #dist_r = math.hypot((round(bbox[0]),round(bbox[1])),(round(bbox[2]), round(bbox[3])))
+    if drawit:
+
+        cv.circle(window, (round(bbox[0]),round(bbox[1])),10,(255,0,0),-1)#topleft
+        cv.circle(window, (round(bbox[2]), round(bbox[3])), 10, (255, 0, 0), -1)#botomright
+        cv.circle(window, (round(((bbox[0]+bbox[2])/2)), round(((bbox[1]+bbox[3])/2))), 10  , (255, 255, 255), -1)#centre
+
     return window
 
 
