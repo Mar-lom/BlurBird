@@ -81,12 +81,12 @@ def draw_bbox(drawit, window,bbox):
         cv.rectangle(window,(bbox[0],bbox[1]),(bbox[2],bbox[3]),(0,0,0),1)
     return window
 def draw_centre(drawit,window,bbox):
-    #dist_r = math.hypot((round(bbox[0]),round(bbox[1])),(round(bbox[2]), round(bbox[3])))
+    dist_r = round(math.sqrt(((bbox[0]-bbox[1])**2)+((bbox[2]-bbox[3])**2)))
     if drawit:
 
         cv.circle(window, (round(bbox[0]),round(bbox[1])),10,(255,0,0),-1)#topleft
         cv.circle(window, (round(bbox[2]), round(bbox[3])), 10, (255, 0, 0), -1)#botomright
-        cv.circle(window, (round(((bbox[0]+bbox[2])/2)), round(((bbox[1]+bbox[3])/2))), 10  , (255, 255, 255), -1)#centre
+        cv.circle(window, (round(((bbox[0]+bbox[2])/2)), round(((bbox[1]+bbox[3])/2))), dist_r, (255, 255, 255), -1)#centre
 
     return window
 
