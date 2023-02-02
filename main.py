@@ -1,12 +1,14 @@
 import cv2 as cv
 import mediapipe as mp
+import numpy as np
 
 
 mp_hands = mp.solutions.hands
 mp_draw = mp.solutions.drawing_utils
 mp_drawStyle = mp.solutions.drawing_styles
 
-
+#debug draw bool
+drawit = True
 def main():
     videoCap = cv.VideoCapture(0)
     hands = mp_hands.Hands(
@@ -45,13 +47,35 @@ def main():
                     mp_drawStyle.get_default_hand_connections_style()
 
                 )
+                bbox =calc_bounding_box(frame,hand_landmarks)
+
+                frame = draw_bbox(drawit,frame,bbox)
+
         cv.imshow('Output', frame)# output window
 
 
     videoCap.release()
-
     cv.destroyAllWindows()
 
 
+def calc_bounding_box(window, landmarks):
+    window_width, window_height = window.shape[1],window.shape[0] #get the window's width and height
+    lm_array = np.empty((0,2), int)
+    for _,landmark in enumerate(landmarks.landmark):
+        lm_x =min(int(landmark.x * window_width), window_width-1)
+        lm_y = min(int(landmark.y *window_height), window_height-1)
+
+        lm_point = [np.array((lm_x,lm_y))]
+        lm_array = np.append(lm_array,lm_point, axis=0)
+
+    x,y,w,h = cv.boundingRect(lm_array)
+
+
+    return[x,y,x+w,y+y]
+
+def draw_bbox(drawit, window,bbox):
+    if drawit:
+        cv.rectangle(window,(bbox[0],bbox[1]),(bbox[2],bbox[3]),(0,0,0),1)
+    return window
 if __name__== "__main__":
     main()
