@@ -23,9 +23,9 @@ def main():
     while True:
         ret, frame = videoCap.read()
         key = cv.waitKey(10)
-
         if key ==27: #ESC to close window
             break
+
         frame.flags.writeable = False #makes it so that the image data is passed by reference before inital processing,
                                         #improves performance
 
@@ -42,12 +42,12 @@ def main():
                 mp_draw.draw_landmarks(
                     frame,
                     hand_landmarks,
-                    mp_hands.HAND_CONNECTIONS,
-                    mp_drawStyle.get_default_hand_landmarks_style(),
-                    mp_drawStyle.get_default_hand_connections_style()
+                    #mp_hands.HAND_CONNECTIONS,
+                    #mp_drawStyle.get_default_hand_landmarks_style(),
+                    #mp_drawStyle.get_default_hand_connections_style()
 
                 )
-                bbox =calc_bounding_box(frame,hand_landmarks)
+                bbox = calc_bounding_box(frame,hand_landmarks)
 
                 frame = draw_bbox(drawit,frame,bbox)
 
@@ -59,13 +59,18 @@ def main():
 
 
 def calc_bounding_box(window, landmarks):
+
     window_width, window_height = window.shape[1],window.shape[0] #get the window's width and height
+
     lm_array = np.empty((0,2), int)
+
     for _,landmark in enumerate(landmarks.landmark):
-        lm_x =min(int(landmark.x * window_width), window_width-1)
+        lm_x = min(int(landmark.x * window_width), window_width-1)
+
         lm_y = min(int(landmark.y *window_height), window_height-1)
 
         lm_point = [np.array((lm_x,lm_y))]
+
         lm_array = np.append(lm_array,lm_point, axis=0)
 
     x,y,w,h = cv.boundingRect(lm_array)
@@ -76,7 +81,9 @@ def calc_bounding_box(window, landmarks):
 #draws the bounding box
 def draw_bbox(drawit, window,bbox):
     if drawit:
-        cv.rectangle(window,(bbox[0],bbox[1]),(bbox[2],bbox[3]),(0,0,0),1)
+
+        cv.rectangle(window,(bbox[0],bbox[1]),(bbox[2],bbox[3]),(0,0,0),-1)
+
     return window
 
 
